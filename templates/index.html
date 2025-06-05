@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>다크웨브 유출 모니터리닝 시스템</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    socket.on("new_data", () => {
+      alert("새로운 게시글이 등록되었습니다.");
+      location.reload();
+    });
+  </script>
+</head>
+<body class="bg-gray-100">
+
+  <!-- 헤더 -->
+  <header class="bg-gray-900 text-white p-4 flex items-center">
+    <span class="text-2xl mr-2">🔍</span>
+    <h1 class="text-2xl font-bold mr-4">BCW</h1>
+    <h2 class="text-xl">다크웨브 유출 모니터리닝 시스템</h2>
+  </header>
+
+  <!-- 키워드 필터 -->
+  <div class="p-4 flex flex-wrap gap-2 bg-white shadow items-center text-sm">
+    <a href="/" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 font-semibold">
+      전체 ({{ total_count }})
+    </a>
+    {% for kw, count in keyword_counts.items() %}
+      <a href="/?keyword={{ kw }}" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 {% if selected == kw %}bg-gray-400{% endif %}">
+        {{ kw }} ({{ count }})
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- 게시글 목록 -->
+  <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for post in posts %}
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="text-lg font-bold mb-2">📌 제목: {{ post.title }}</h2>
+        <p class="text-sm mb-1">👤 작성자: {{ post.author }}</p>
+        <p class="text-sm mb-1">📅 날짜: {{ post.date }}</p>
+        <p class="text-sm mb-1">🔑 키워드: {{ post.keywords or '없음' }}</p>
+        <p class="text-sm mt-2">📝 요약: {{ post.summary[:300] }}</p>
+      </div>
+    {% else %}
+      <p class="col-span-3 text-center text-gray-500">게시물이 없습니다.</p>
+    {% endfor %}
+  </div>
+
+</body>
+</html>
